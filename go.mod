@@ -1,4 +1,4 @@
-module grpc-go-exercise
+module github.com/naren142h/grpc-go-exercise
 
 go 1.15
 
