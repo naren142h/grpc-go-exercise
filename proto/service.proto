@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option go_package = "proto";
 
-package proto;
-
 message Request {
   int64 a = 1;
   int64 b = 2;
