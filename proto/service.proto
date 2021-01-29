@@ -12,6 +12,10 @@ message Response {
 }
 
 service CalculatorService {
-  rpc Add(Request) returns (Response);
+  rpc Add(Request) returns (Response) {
+    option (google.api.http) = {
+      post: "/v1/echo"
+      body: "*"
+    };
   rpc Multiply(Request) returns (Response);
 }
