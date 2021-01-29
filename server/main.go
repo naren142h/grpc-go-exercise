@@ -1,20 +1,33 @@
 package main
 
 import (
-    "google.golang.org/grpc"
-    "os"
+	"fmt"
+	"log"
+	"net"
+	"os"
 
-    pb "grpc-tutorial/proto"
+	"google.golang.org/grpc"
+
+	pb "grpc-tutorial/proto"
 )
 
 func main() {
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-    srv := grpc.NewServer()
-    pb.RegisterCalculatorServiceServer(srv, NewServer())
+	grpcEndpoint := fmt.Sprintf(":%s", port)
 
-    listen, err :=
+	grpcServer := grpc.NewServer()
+	pb.RegisterCalculatorServiceServer(grpcServer, NewServer())
+
+	listen, err := net.Listen("tcp", grpcEndpoint)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Starting gRPC listener [%s]\n", grpcEndpoint)
+	log.Fatal(grpcServer.Serve(listen))
+
 }
