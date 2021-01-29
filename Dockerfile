@@ -3,7 +3,7 @@ FROM golang@sha256:205d5cf61216a16da4431dd5796793c650236159fa04e055459940ddc4c63
 WORKDIR /srv/grpc
 
 COPY go.mod .
-COPY proto/service.proto ./proto/
+COPY proto/calculator/service.proto ./proto/
 COPY server/*.go ./server/
 
 ARG VERS="3.11.4"

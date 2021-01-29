@@ -1,11 +1,10 @@
-module grpc-tutorial
+module grpc-go-exercise
 
-go 1.13
+go 1.15
 
 require (
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
-	golang.org/x/sys v0.0.0-20200331124033-c3d80250170d // indirect
-	golang.org/x/text v0.3.2 // indirect
-	google.golang.org/grpc v1.30.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.1.0
+	google.golang.org/genproto v0.0.0-20210106152847-07624b53cd92
+	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 )
