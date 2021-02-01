@@ -11,7 +11,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 
-	pb "grpc-go-exercise/proto/calculator"
+	pb "github.com/naren142h/grpc-go-exercise/proto/calculator"
 )
 
 //var _ pb.CalculatorServiceServer = (*server)(nil)

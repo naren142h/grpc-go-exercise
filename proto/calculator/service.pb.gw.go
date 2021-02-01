@@ -2,11 +2,11 @@
 // source: calculator/service.proto
 
 /*
-Package calc_ulator is a reverse proxy.
+Package calculator is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package calc_ulator
+package calculator
 
 import (
 	"context"

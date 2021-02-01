@@ -4,7 +4,7 @@ WORKDIR /srv/grpc
 
 COPY go.mod .
 COPY proto/calculator/service.proto ./proto/
-COPY server/*.go ./server/
+COPY *.go ./server/
 
 ARG VERS="3.11.4"
 ARG ARCH="linux-x86_64"

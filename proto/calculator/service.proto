@@ -4,7 +4,7 @@ package calculator;
 
 import "google/api/annotations.proto";
 
-option go_package = "grpc-go-exercise/proto;calc_ulator";
+option go_package = "github.com/naren142h/grpc-go-exercise/proto;calculator";
 
 message Request {
   int64 a = 1;
