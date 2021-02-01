@@ -43,12 +43,7 @@ func (s *server) Multiply(ctx context.Context, req *pb.Request) (*pb.Response, e
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8081"
-	}
-
-	grpcEndpoint := fmt.Sprintf(":%s", port)
+	grpcEndpoint := fmt.Sprintf(":8090")
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterCalculatorServiceServer(grpcServer, &server{})
@@ -66,7 +61,7 @@ func main() {
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"localhost:8081",
+		grpcEndpoint,
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	)
@@ -81,12 +76,19 @@ func main() {
 		log.Fatalln("Failed to register gateway:", err)
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	httpEndpoint := fmt.Sprintf(":%s", port)
+
 	gwServer := &http.Server{
-		Addr:    ":8091",
+		Addr:    httpEndpoint,
 		Handler: gwmux,
 	}
 
-	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8091")
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0" + httpEndpoint)
 	log.Fatalln(gwServer.ListenAndServe())
 
 }
