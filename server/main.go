@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/open-policy-agent/opa/rego"
 	"google.golang.org/grpc"
 
 	pb "github.com/naren142h/grpc-go-exercise/proto/calculator"
@@ -28,18 +31,105 @@ func newServer() *server {
 
 // Add adds two numbers
 func (s *server) Add(ctx context.Context, req *pb.Request) (*pb.Response, error) {
-	a := req.GetA()
-	b := req.GetB()
-	res := a + b
-	return &pb.Response{Result: res}, nil
+
+	module := getRego()
+
+	query, err := rego.New(
+		rego.Query("y = data.example.authz.allow"),
+		rego.Module("example.rego", module),
+	).PrepareForEval(ctx)
+	if err != nil {
+		// Handle error.
+	}
+
+	input := map[string]interface{}{
+		"method":   "POST",
+		"function": "Add",
+		"user":     req.GetUser(),
+	}
+
+	results, err := query.Eval(ctx, rego.EvalInput(input))
+
+	if err != nil {
+		// Handle evaluation error.
+	} else if len(results) == 0 {
+		// Handle undefined result.
+	} else if result, ok := results[0].Bindings["y"].(bool); !ok {
+		// Handle unexpected result type.
+		fmt.Printf("Unexpected result: " + strconv.FormatBool(result))
+	}
+
+	// Handle result/decision.
+	if result, _ := results[0].Bindings["y"].(bool); result {
+		a := req.GetA()
+		b := req.GetB()
+		res := a + b
+		return &pb.Response{Result: res}, nil
+	}
+
+	return &pb.Response{}, errors.New("Access denied! You are not allowed to Add!")
+
 }
 
 //Multiply multiplies two numbers
 func (s *server) Multiply(ctx context.Context, req *pb.Request) (*pb.Response, error) {
-	a := req.GetA()
-	b := req.GetB()
-	res := a * b
-	return &pb.Response{Result: res}, nil
+
+	module := getRego()
+
+	query, err := rego.New(
+		rego.Query("y = data.example.authz.allow"),
+		rego.Module("example.rego", module),
+	).PrepareForEval(ctx)
+	if err != nil {
+		// Handle error.
+	}
+
+	input := map[string]interface{}{
+		"method":   "POST",
+		"function": "Multiply",
+		"user":     req.GetUser(),
+	}
+
+	results, err := query.Eval(ctx, rego.EvalInput(input))
+
+	if err != nil {
+		// Handle evaluation error.
+	} else if len(results) == 0 {
+		// Handle undefined result.
+	} else if result, ok := results[0].Bindings["y"].(bool); !ok {
+		// Handle unexpected result type.
+		fmt.Printf("Unexpected result: " + strconv.FormatBool(result))
+	}
+
+	// Handle result/decision.
+	if result, _ := results[0].Bindings["y"].(bool); result {
+		a := req.GetA()
+		b := req.GetB()
+		res := a * b
+		return &pb.Response{Result: res}, nil
+	}
+
+	return &pb.Response{}, errors.New("Access denied! You are not allowed to Multiply!")
+}
+
+func getRego() string {
+	return `
+	package example.authz
+
+	default allow = false
+
+	allow {
+		input.method = "POST"
+		input.function = "Add"
+		input.user = "Naren"
+	}
+
+	allow {
+		input.method = "POST"
+		input.function = "Multiply"
+		input.user = "Sebastian"
+	}
+	`
 }
 
 func main() {

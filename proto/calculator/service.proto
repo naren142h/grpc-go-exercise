@@ -7,8 +7,12 @@ import "google/api/annotations.proto";
 option go_package = "github.com/naren142h/grpc-go-exercise/proto;calculator";
 
 message Request {
+  // The two number to do the calculation on
   int64 a = 1;
   int64 b = 2;
+
+  // The user requesting
+  string user = 3;
 }
 
 message Response { 
